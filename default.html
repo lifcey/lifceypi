@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+	<title>Smart Home Master</title>
+
+</head>
+<html>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand" href="#">
+				<img src="/static/pipe32.png" class="d-inline-block align-top" alt="">
+				Smart Home Master
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarToggler">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item active"><a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a></li>
+		      <li class="nav-item">{% raw settings_link %} </li>
+		    </ul>
+				<ul class="navbar-nav my-2 my-lg-0">
+					<li class="nav-item"><a  class="nav-link" href="/auth/logout/">Logout</a></li>
+		    </ul>
+		  </div>
+		</nav>
+
+		<div class="container">
+				<div class="jumbotron mt-4 py-3 shadow bg-grey rounded">
+					<h2> Relays </h2>
+					<form id="formRelays">
+						<div id = "divRelays" class="form-group p-1 shadow bg-light rounded"></div>
+
+						<!-- <div id = "divRelays" class="btn-group-toggle" data-toggle="buttons"> 				</div>-->
+					</form>
+				</div>
+				<div class="jumbotron py-3 shadow bg-grey rounded">
+					<h2> Temperature and humidity sensors </h2>
+					<div id="divdht22s"></div>
+				</div>
+				<div class="jumbotron py-3 shadow bg-grey rounded">
+					<h2> ASIC stats </h2>
+					<div class="jumbotron py-2 my-2 shadow bg-light rounded">
+						<button type="button" id="btnTemps" class="btn btn-secondary shadow">Show temps</button>
+						<p id="asic"></p>
+					</div>
+				</div>
+		</div>
+
+
+		<script type="text/javascript" src="static/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+		<script>
+					var arrRelays = JSON.parse( '{% raw relays %}' );
+					var arrdht22s = JSON.parse( '{% raw dht22s %}' );
+					for (let i = 0; i < arrRelays.length; i++) {
+								$("#divRelays").append('<button id="chbRelay' + i + '" class="btn btn-secondary shadow m-1 active" data-toggle="button" aria-pressed="false" autocomplete="off">' +  arrRelays[i][0] + '</button>');
+								$("#chbRelay" + i).prop("disabled", true);
+
+						}
+						for (let i = 0; i < arrdht22s.length; i++) {
+							$("#divdht22s").append('<div class="jumbotron py-2 my-2 shadow bg-light rounded"><h4>Sensor: ' + arrdht22s[i][0] + '</h4><label>Humidity: </label><label id="lbldht22h' + i +
+								'"></label><label>&nbsp;&nbsp;&nbsp;&nbsp;Temperature: </label><label id="lbldht22t' + i + '"></label></div>');
+							}
+
+		</script>
+
+
+		<script type="text/javascript">
+
+			function ajax_err(request, error) {
+          console.log(request);
+          console.log(error);
+      }
+      function ajax_ok(data) {
+				console.log(data);
+					$("#asic").text(JSON.stringify(data));
+      }
+
+			jQuery(document).ready(function () {
+				var arrRelays = JSON.parse( '{% raw relays %}' );
+				var arrdht22s = JSON.parse( '{% raw dht22s %}' );
+
+
+
+				if ("WebSocket" in window){
+					var ws = new WebSocket("ws://lifcey.ru:8081/websocket");
+					var messagecount = 0;
+
+					ws.onmessage = function(evt) {
+						var states;
+						messagecount += 1;
+						states = JSON.parse(evt.data);
+						relay_states = states['relays'];
+						dht22_states = states['dht22s'];
+
+
+
+						for (let i = 0; i < arrRelays.length; i++) {
+							if (relay_states[i.toString()]) {
+								$("#chbRelay" + i).addClass('active');
+								$("#chbRelay" + i).prop("aria-pressed", true);
+							} else {
+								$("#chbRelay" + i).removeClass('active');
+								$("#chbRelay" + i).prop("aria-pressed", false);
+							}
+						}
+						for (let i = 0; i < arrdht22s.length; i++) {
+							$("#lbldht22h" + i).text(dht22_states[(2*i).toString()]);
+							$("#lbldht22t" + i).text(dht22_states[(2*i + 1).toString()]);
+						}
+					}
+					ws.onopen = function() {
+						messagecount = 0;
+
+						for (let i = 0; i < arrRelays.length; i++) {
+							$("#chbRelay" + i).prop("disabled", false);
+						}
+					}
+					ws.onclose = function() {
+						messagecount = 0;
+						for (let i = 0; i < arrRelays.length; i++) {
+							$("#chbRelay" + i).prop("disabled", true);
+						}
+					}
+
+					$("#btnTemps").on( "click", function(){
+						var json = {"": ""};
+						let r = {
+								url : '/',
+								type : 'POST',
+								data : JSON.stringify(json),
+								dataType: 'json',
+								success : ajax_ok,
+								error: ajax_err
+						}
+						$.ajax(r);
+					})
+
+
+					for (let i = 0; i < arrRelays.length; i++) {
+						$("#chbRelay" + i).click(function(){
+							var msg = {
+								Event: "RelayTrip",
+								Relay: i,
+								State: !$("#chbRelay" + i).hasClass('active')
+							};
+							console.log($("#chbRelay" + i).hasClass('active'));
+							ws.send(JSON.stringify(msg));
+							console.log(msg);
+						})
+					}
+
+				}
+				else { //no websocket
+					for (let i = 0; i < arrRelays.length; i++) {
+						$("#chbRelay" + i).prop("disabled", true);
+					}
+					alert("WebSocket NOT support by your Browser!");
+				}
+			});
+		</script>
+
+	</body>
+</html>

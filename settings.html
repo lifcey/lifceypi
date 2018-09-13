@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>LifceyPi automation settings</title>
+
+    <script type="text/javascript" src="../static/jquery.min.js"></script>
+    <link type="text/css" href="../static/jquery-ui.min.css" rel="Stylesheet" />
+    <script type="text/javascript" src="../static/jquery-ui.min.js"></script>
+<!--
+    <link type="text/css" href="../static/jquery.mobile.custom.theme.min.css" rel="Stylesheet" />
+    <link type="text/css" href="../static/jquery.mobile.custom.structure.min.css" rel="Stylesheet" />
+    <script type="text/javascript" src="../static/jquery.mobile.custom.min.js"></script>
+-->
+    <link type="text/css" href="../static/pipe.css" rel="stylesheet">
+
+
+    <script>
+
+      arrRelays = JSON.parse( '{% raw relays %}' );
+      arrdht22s = JSON.parse( '{% raw dht22s %}' );
+      arrMiners = JSON.parse( '{% raw miners %}' );
+
+      function ajax_err(request, error) {
+          console.log(request);
+          console.log(error);
+      }
+      function ajax_ok(data) {
+          console.log(data);
+      }
+
+
+
+
+      $( document ).ready(function() {
+
+        $( "#accordion" ).accordion({heightStyle: "content"});
+
+        for (var i = 0; i < arrRelays.length; i++) {
+          str = '<div class="divRelay"><input type="checkbox" class="chbRelay"><span class="checkboxtext">&nbsp</span><input type="text" class="inpName" value="' +
+            arrRelays[i][0] + '"></input><input type="text" class="inpPin" value="' + arrRelays[i][1] + '"></input></div>';
+          $("#relays_list").append(str);
+        }
+
+        $( "#btnRelayAdd" ).click( function( event ) {
+          relay_index = $("#relays_list").children(".divRelay").length;
+          str = '<div class="divRelay"><input type="checkbox" class="chbRelay"><span class="checkboxtext">&nbsp</span><input type="text" class="inpName" value="Relay ' +
+            (relay_index+1) + '"></input><input type="text" class="inpPin" value="' + (relay_index+1) + '"></input></div>';
+          $("#relays_list").append(str);
+          //event.preventDefault();
+        } );
+        $( "#btnRelayClear" ).click( function( event ) {
+          $(".divRelay").each( function( index, listItem ) {
+              if ($(listItem).children(".chbRelay").prop('checked') == true) {
+                $(listItem).remove();
+              }
+          });
+        } );
+
+        $( "#btnRelaySave" ).click( function( event ) {
+          var arrRelays = [];
+          $(".divRelay").each( function( index, listItem ) {
+              name =  String($(listItem).children(".inpName").prop('value'));
+              pin = parseInt($(listItem).children(".inpPin").prop('value'));
+              arrRelays.push([name, pin]);
+          });
+          json = {"type": "relay", "data" : arrRelays};
+          let r = {
+              url : '/settings/',
+              type : 'POST',
+              data : JSON.stringify(json),
+              dataType: 'json',
+              success : ajax_ok,
+              error: ajax_err
+          }
+          $.ajax(r);
+        } );
+
+        $('.inpName').keypress(function(e){
+            var txt = String.fromCharCode(e.which);
+            if(!txt.match(/[A-Za-zа-яА-ЯёЁ0-9\s]/)) {
+                return false;
+            }
+        });
+        $('.inpPin').keypress(function(e){
+            var txt = String.fromCharCode(e.which);
+            if(!txt.match(/[0-9]/) || ($(this).prop('value').length > 2)) {
+                return false;
+            }
+        });
+
+
+        for (var i = 0; i < arrdht22s.length; i++) {
+          str = '<div class="divdht22"><input type="checkbox" class="chbdht22"><span class="checkboxtext">&nbsp</span><input type="text" class="inpName" value="' +
+            arrdht22s[i][0] + '"></input><input type="text" class="inpPin" value="' + arrdht22s[i][1] + '"></input></div>';
+          $("#dht22s_list").append(str);
+        }
+
+        $( "#btndht22Add" ).click( function( event ) {
+          dht22_index = $("#dht22s_list").children(".divdht22").length;
+          str = '<div class="divdht22"><input type="checkbox" class="chbdht22"><span class="checkboxtext">&nbsp</span><input type="text" class="inpName" value="dht22 ' +
+            (dht22_index+1) + '"></input><input type="text" class="inpPin" value="' + (dht22_index+1) + '"></input></div>';
+            console.log(str);
+          $("#dht22s_list").append(str);
+          //event.preventDefault();
+        } );
+        $( "#btndht22Clear" ).click( function( event ) {
+          $(".divdht22").each( function( index, listItem ) {
+              if ($(listItem).children(".chbdht22").prop('checked') == true) {
+                $(listItem).remove();
+              }
+          });
+        } );
+
+        $( "#btndht22Save" ).click( function( event ) {
+          var arrdht22s = [];
+          $(".divdht22").each( function( index, listItem ) {
+              name =  String($(listItem).children(".inpName").prop('value'));
+              pin = parseInt($(listItem).children(".inpPin").prop('value'));
+              arrdht22s.push([name, pin]);
+          });
+
+          json = {"type": "dht22", "data" : arrdht22s};
+          let r = {
+              url : '/settings/',
+              type : 'POST',
+              data : JSON.stringify(json),
+              dataType: 'json',
+              success : ajax_ok,
+              error: ajax_err
+          }
+          $.ajax(r);
+        } );
+
+        console.log(arrMiners);
+        for (var i = 0; i < arrMiners.length; i++) {
+          str = '<div class="divMiner"><input type="checkbox" class="chbMiner"><span class="checkboxtext">&nbsp</span><input type="text" data-clear-btn="true" class="inpName" value="' +
+            arrMiners[i][0] + '"></input><input type="url" data-clear-btn="true" class="inpAddress" value="' +
+            decodeURI(arrMiners[i][1]) + '"></input><select class="inpType" value="' +
+            arrMiners[i][2] + '"><option value="Antminer S9">Antminer S9</option><option value="Antminer L3">Antminer L3</option><option value="Innosilicon A8">Innosilicon A8</option></select></div>';
+
+          $("#miners_list").append(str);
+          var divM = $("#miners_list").children(".divMiner");
+          $(divM[i]).children(".inpType").val(arrMiners[i][2]);
+
+        }
+
+        $( "#btnMinerAdd" ).click( function( event ) {
+          Miner_index = $("#miners_list").children(".divMiner").length;
+          str = '<div class="divMiner"><input type="checkbox" class="chbMiner"><span class="checkboxtext">&nbsp</span><input type="text" data-clear-btn="true" class="inpName" value="' +
+            (Miner_index+1) + '"></input><input type="url" data-clear-btn="true" class="inpAddress" value="' +
+            (Miner_index+1) + '"></input><select class="inpType" value="' +
+            (Miner_index+1) + '"><option value="s9">Antminer S9</option><option value="l3">Antminer L3</option><option value="a8">Innosilicon A8</option></select></div>'
+
+            console.log(str);
+          $("#miners_list").append(str);
+
+          //event.preventDefault();
+        });
+        $( "#btnMinerClear" ).click( function( event ) {
+          $(".divMiner").each( function( index, listItem ) {
+              if ($(listItem).children(".chbMiner").prop('checked') == true) {
+                $(listItem).remove();
+              }
+          });
+        });
+
+        $( "#btnMinerSave" ).click( function( event ) {
+          var arrMiners = [];
+          $(".divMiner").each( function( index, listItem ) {
+              Mname =  String($(listItem).children(".inpName").prop('value'));
+              Maddress = encodeURI($(listItem).children(".inpAddress").prop('value'));
+              Mtype = $(listItem).children(".inpType").prop('value');
+              arrMiners.push([Mname, Maddress, Mtype]);
+          });
+
+          json = {"type": "Miner", "data" : arrMiners};
+          let r = {
+              url : '/settings/',
+              type : 'POST',
+              data : JSON.stringify(json),
+              dataType: 'json',
+              success : ajax_ok,
+              error: ajax_err
+          }
+          $.ajax(r);
+        });
+
+      });
+
+    </script>
+
+  </head>
+  <body>
+    <a href="../">Back to Main</a>
+    <div id="accordion">
+      <h3>Relays</h3>
+      <div id="relays">
+        <p>Relay name &nbsp; Relay pin </p>
+        <div id="relays_list">
+        </div>
+        <p></p>
+        <div>
+          <button id="btnRelayAdd" class="ui-button ui-widget ui-corner-all">Add</button>
+          <button id="btnRelayClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+          <button id="btnRelaySave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+        </div>
+      </div>
+      <h3>Temperature and humidity DHT22 sensors</h3>
+      <div id="dht22s">
+        <p>DHT22 sensor name &nbsp; DHT22 sensor pin </p>
+        <div id="dht22s_list">
+        </div>
+        <p></p>
+        <div>
+          <button id="btndht22Add" class="ui-button ui-widget ui-corner-all">Add</button>
+          <button id="btndht22Clear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+          <button id="btndht22Save" class="ui-button ui-widget ui-corner-all">Save changes</button>
+        </div>
+      </div>
+      <h3>Miners</h3>
+      <div id="miners">
+        <p>Miner name &nbsp; Miner address &nbsp; Miner Type</p>
+        <div id="miners_list">
+        </div>
+        <p></p>
+        <div>
+          <button id="btnMinerAdd" class="ui-button ui-widget ui-corner-all">Add</button>
+          <button id="btnMinerClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+          <button id="btnMinerSave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+        </div>
+      </div>
+    </div>
+
+    <p> {{username}} </p>
+  </body>
+</html>
