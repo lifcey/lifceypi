@@ -6,7 +6,7 @@ import os
 class RepoSettings(object):
     """DB connection for settings"""
     def __init__(self):
-        self.conn = "settings.db"
+        self.conn = "private/settings.db"
         if os.path.exists(self.conn) and os.path.getsize(self.conn) > 0:
             pass
         else:

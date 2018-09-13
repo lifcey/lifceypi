@@ -11,7 +11,7 @@
 </head>
 <html>
 	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
 			<a class="navbar-brand" href="#">
 				<img src="/static/pipe32.png" class="d-inline-block align-top" alt="">
 				Smart Home Master
@@ -80,10 +80,14 @@
 			function ajax_err(request, error) {
           console.log(request);
           console.log(error);
+					$("#btnTemps").text("Show temps");
+					$("#btnTemps").removeClass('disabled');
       }
       function ajax_ok(data) {
 				console.log(data);
 					$("#asic").text(JSON.stringify(data));
+					$("#btnTemps").text("Show temps");
+					$("#btnTemps").removeClass('disabled');
       }
 
 			jQuery(document).ready(function () {
@@ -143,6 +147,8 @@
 								success : ajax_ok,
 								error: ajax_err
 						}
+						$("#btnTemps").text("Loading...");
+						$("#btnTemps").addClass('disabled');
 						$.ajax(r);
 					})
 

@@ -3,7 +3,7 @@ import sqlite3
 class RepoUsers(object):
     """DB connection for users"""
     def __init__(self):
-        self.conn = "users.db"
+        self.conn = "private/users.db"
 
     def validate_user(self, username, password):
         conn = sqlite3.connect(self.conn, detect_types=sqlite3.PARSE_DECLTYPES)
