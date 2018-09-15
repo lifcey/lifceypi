@@ -110,15 +110,7 @@ class MainHandler(BaseHandler):
 
 	def post(self, *args):
 		dic = {}
-		response = requests.get('http://s91.lifcey.keenetic.link/cgi-bin/minerStatus.cgi', auth=HTTPDigestAuth('root', 'zZz231570'))
-		tree = html.fromstring(response.content)
-		dic["S91"] = tornado.escape.json_encode(tree.xpath('//div[@id="cbi-table-1-temp2"]/text()'))
-		response = requests.get('http://s93.lifcey.keenetic.link/cgi-bin/minerStatus.cgi', auth=HTTPDigestAuth('root', 'zZz231570'))
-		tree = html.fromstring(response.content)
-		dic["S93"] = tornado.escape.json_encode(tree.xpath('//div[@id="cbi-table-1-temp2"]/text()'))
-		response = requests.get('http://s94.lifcey.keenetic.link/cgi-bin/minerStatus.cgi', auth=HTTPDigestAuth('root', 'zZz231570'))
-		tree = html.fromstring(response.content)
-		dic["S94"] = tornado.escape.json_encode(tree.xpath('//div[@id="cbi-table-1-temp2"]/text()'))
+
 		self.write(json.dumps(dic))
 
 		self.finish()
