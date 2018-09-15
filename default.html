@@ -85,7 +85,7 @@
       }
       function ajax_ok(data) {
 				console.log(data);
-					$("#asic").text(JSON.stringify(data));
+					$("#asic").text("Got some info from ASICs: " + JSON.stringify(data));
 					$("#btnTemps").text("Show temps");
 					$("#btnTemps").removeClass('disabled');
       }
