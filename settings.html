@@ -8,52 +8,112 @@
     <title>Smart Home Master - Settings</title>
   </head>
   <body>
-    <a href="../">Back to Main</a>
-    <div id="accordion">
-      <h3>Relays</h3>
-      <div id="relays">
-        <p>Relay name &nbsp; Relay pin </p>
-        <div id="relays_list">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+			<a class="navbar-brand" href="#">
+				<img src="/static/pipe32.png" class="d-inline-block align-top" alt="">
+				Smart Home Master
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+		    <span class="navbar-toggler-icon"></span>
+		  </button>
+
+		  <div class="collapse navbar-collapse" id="navbarToggler">
+		    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+		      <li class="nav-item"><a class="nav-link" href="../">Home</a></li>
+		      <li class="nav-item active"><a class="nav-link" href="/settings/">Settings <span class="sr-only">(current)</span></a></li>
+		    </ul>
+				<ul class="navbar-nav my-2 my-lg-0">
+					<li class="nav-item"><a  class="nav-link" href="/auth/logout/">Logout</a></li>
+		    </ul>
+		  </div>
+		</nav>
+
+
+
+
+    <div id="accordion" class="panel-group container jumbotron shadow">
+      <div class="card shadow bg-secondary">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button class="btn btn-link text-white" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Relays
+            </button>
+          </h5>
         </div>
-        <p></p>
-        <div>
-          <button id="btnRelayAdd" class="ui-button ui-widget ui-corner-all">Add</button>
-          <button id="btnRelayClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
-          <button id="btnRelaySave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+
+        <div id="collapseOne" class="collapse show bg-light" aria-labelledby="headingOne" data-parent="#accordion">
+          <div class="card-body">
+            <div id="relays">
+              <p>Relay name &nbsp; Relay pin </p>
+              <div id="relays_list">
+              </div>
+              <p></p>
+              <div>
+                <button id="btnRelayAdd" class="ui-button ui-widget ui-corner-all">Add</button>
+                <button id="btnRelayClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+                <button id="btnRelaySave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <h3>Temperature and humidity DHT22 sensors</h3>
-      <div id="dht22s">
-        <p>DHT22 sensor name &nbsp; DHT22 sensor pin </p>
-        <div id="dht22s_list">
+      <div class="card shadow bg-secondary">
+        <div class="card-header" id="headingTwo">
+          <h5 class="mb-0">
+            <button class="btn btn-link text-white collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              Temperature and humidity DHT22 sensors
+            </button>
+          </h5>
         </div>
-        <p></p>
-        <div>
-          <button id="btndht22Add" class="ui-button ui-widget ui-corner-all">Add</button>
-          <button id="btndht22Clear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
-          <button id="btndht22Save" class="ui-button ui-widget ui-corner-all">Save changes</button>
+        <div id="collapseTwo" class="collapse bg-light" aria-labelledby="headingTwo" data-parent="#accordion">
+          <div class="card-body">
+            <div id="dht22s">
+              <p>DHT22 sensor name &nbsp; DHT22 sensor pin </p>
+              <div id="dht22s_list">
+              </div>
+              <p></p>
+              <div>
+                <button id="btndht22Add" class="ui-button ui-widget ui-corner-all">Add</button>
+                <button id="btndht22Clear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+                <button id="btndht22Save" class="ui-button ui-widget ui-corner-all">Save changes</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <h3>Miners</h3>
-      <div id="miners">
-        <p>Miner name &nbsp; Miner address &nbsp; Miner Type</p>
-        <div id="miners_list">
+      <div class="card shadow bg-secondary">
+        <div class="card-header" id="headingThree">
+          <h5 class="mb-0 bg-grey">
+            <button class="btn btn-link text-white collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              Miners
+            </button>
+          </h5>
         </div>
-        <p></p>
-        <div>
-          <button id="btnMinerAdd" class="ui-button ui-widget ui-corner-all">Add</button>
-          <button id="btnMinerClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
-          <button id="btnMinerSave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+        <div id="collapseThree" class="collapse bg-light" aria-labelledby="headingThree" data-parent="#accordion">
+          <div class="card-body well">
+            <div id="miners">
+              <p>Miner name &nbsp; Miner address &nbsp; Miner Type</p>
+              <div id="miners_list">
+              </div>
+              <p></p>
+              <div>
+                <button id="btnMinerAdd" class="ui-button ui-widget ui-corner-all">Add</button>
+                <button id="btnMinerClear" class="ui-button ui-widget ui-corner-all">Remove checked</button>
+                <button id="btnMinerSave" class="ui-button ui-widget ui-corner-all">Save changes</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
 
     <p> {{username}} </p>
   </body>
 </html>
 
 
-<script type="text/javascript" src="static/jquery.min.js"></script>
+<script type="text/javascript" src="../static/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
@@ -72,11 +132,7 @@
   }
 
 
-
-
   $( document ).ready(function() {
-
-    $( "#accordion" ).accordion({heightStyle: "content"});
 
     for (var i = 0; i < arrRelays.length; i++) {
       str = '<div class="divRelay"><input type="checkbox" class="chbRelay"><span class="checkboxtext">&nbsp</span><input type="text" class="inpName" value="' +

@@ -100,7 +100,7 @@ class MainHandler(BaseHandler):
 			return
 
 		if repo.is_admin(username):
-			settings_link = '<a class="nav-link" href="/settings/">Settings</a>'
+			settings_link = ''
 
 		rs = RepoSettings()
 		relays = tornado.escape.json_encode(rs.get_relays())
