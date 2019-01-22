@@ -195,7 +195,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
 		WebSocketHandler.waiters.add(self)
 
 	def on_close(self):
-		WebSocketHandler.waiters.remove(self)
+		if self:
+			WebSocketHandler.waiters.remove(self)
 
 	@classmethod
 	def send_updates(cls):
